@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, Inject, UsePipes, ValidationPipe, Logger } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IUsersService } from './interfaces/IUsersService';
@@ -6,11 +6,13 @@ import { IUsersService } from './interfaces/IUsersService';
 @Controller('users')
 export class UsersController {
   
+  private readonly logger = new Logger(UsersController.name);
 
   constructor(@Inject('IUsersService') private readonly usersService: IUsersService) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
+    this.logger.log(`Someone is creating a user ${JSON.stringify(createUserDto)}`);
     return this.usersService.create(createUserDto);
   }
 

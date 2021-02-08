@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -9,6 +9,7 @@ import { IUsersService } from './interfaces/IUsersService';
 export class UsersService implements IUsersService {
 
   private users: User[] = [];
+  private readonly logger = new Logger(UsersService.name);
  
   async create(createUserDto: CreateUserDto): Promise<User> {
     await new Promise((res) => {
@@ -26,6 +27,7 @@ export class UsersService implements IUsersService {
   findOne(id: string): User {
     const user = this.users.find(user => user.id === id);
     if(!user) {
+      this.logger.warn(`User with id ${id} was not found`);
       throw new NotFoundException('User is not found');
     }
     return user;
