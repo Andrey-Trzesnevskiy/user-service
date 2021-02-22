@@ -1,53 +1,47 @@
-# This is a basic workflow to help you get started with Actions
+# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: Build and Deploy
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  tests:
+
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [14.x]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: user Node.js ${{matrix.node-version}}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{matrix.node-version}}
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
 
-      - name: Install dependecies
-        run: npm i
-        working-directory: ./user-service
+    # Install deps with Yarn
+    - name: Install dependencies
+      run: npm i
+      working-directory: ./user-service
+    
+    # Run linter checks
+    - name: Run TS lint
+      run: npm run lint
+      working-directory: ./user-service
 
-        # Run linter checks
-      - name: Run TS lint
-        run: npm run lint
-        working-directory: ./user-service
+    # Run tests
+    - name: Run tests
+      run: npm run test
+      working-directory: ./user-service
 
-      
-      - name: Run tests
-        run: npm run test
-        working-directory: ./user-service
 
-deploy:
+  deploy:
     if: github.event_name == 'push'
 
     runs-on: ubuntu-latest
@@ -68,7 +62,7 @@ deploy:
         docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_PASSWORD}}
   
     - name: Build the Docker image
-      run: docker build ./user-service --file ./user-service/Dockerfile --tag Andrey/jsprocamp-user-service:latest
+      run: docker build ./user-service --file ./user-service/Dockerfile --tag iivashchuk/jsprocamp-user-service:latest
       
     - name: Docker Push
-      run: docker push Andrey/jsprocamp-user-service
+      run: docker push iivashchuk/jsprocamp-user-service
