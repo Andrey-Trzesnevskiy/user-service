@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { v4 as uuid } from 'uuid';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IUsersService } from './interfaces/IUsersService';
@@ -42,10 +41,9 @@ export class UsersService implements IUsersService {
         throw new NotFoundException(`User with id ${id} doen't exist`);
       }
       return user;
-    } catch(error) {
+    } catch (error) {
       throw new NotFoundException(error);
     }
-
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -57,7 +55,6 @@ export class UsersService implements IUsersService {
     } catch (error) {
       throw new NotFoundException(error);
     }
-
   }
 
   async remove(id: string) {
@@ -65,9 +62,8 @@ export class UsersService implements IUsersService {
       const user = await this.findOne(id);
       await user.remove();
       return id;
-    } catch(error) {
+    } catch (error) {
       throw new NotFoundException(error);
     }
-
   }
 }

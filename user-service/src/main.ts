@@ -9,11 +9,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   const logger = new Logger(AppModule.name);
   const config = new DocumentBuilder()
-  .setTitle('Users API')
-  .setDescription('This API allows you to manipulate users data')
-  .setVersion('1.0')
-  .addTag('users')
-  .build();
+    .setTitle('Users API')
+    .setDescription('This API allows you to manipulate users data')
+    .setVersion('1.0')
+    .addTag('users')
+    .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, document);
 
