@@ -62,7 +62,7 @@ jobs:
         docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_PASSWORD}}
   
     - name: Build the Docker image
-      run: docker build ./user-service --file ./user-service/Dockerfile --tag iivashchuk/jsprocamp-user-service:latest
+      run: docker build ./user-service --file ./user-service/Dockerfile --tag andrew/jsprocamp-user-service:latest
       
     - name: Docker Push
-      run: docker push iivashchuk/jsprocamp-user-service
+      run: docker push andrew/jsprocamp-user-service
