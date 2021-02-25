@@ -1,3 +1,6 @@
+import { ClearCacheInterceptor } from './../cache/ClearCacheInterceptor';
+import { RedisAdapter } from './../cache/RedisAdapter';
+import { IUsersService } from './interfaces/IUserService';
 import {
   Controller,
   Get,
@@ -8,10 +11,12 @@ import {
   Delete,
   Inject,
   Logger,
+  UseInterceptors,
+  CacheTTL,
 } from '@nestjs/common';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { IUsersService } from './interfaces/IUsersService';
 
 @Controller('users')
 export class UsersController {
@@ -19,9 +24,13 @@ export class UsersController {
 
   constructor(
     @Inject('IUsersService') private readonly usersService: IUsersService,
-  ) {}
+    redisAdapter: RedisAdapter,
+  ) {
+    redisAdapter.getClient().set('hello', 'world');
+  }
 
   @Post()
+  @UseInterceptors(ClearCacheInterceptor)
   create(@Body() createUserDto: CreateUserDto) {
     this.logger.log(
       'Someone is creating a user' + JSON.stringify(createUserDto),
@@ -30,7 +39,9 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
+  @CacheTTL(10)
+  async findAll() {
+    await new Promise((r) => setTimeout(r, 5000));
     return this.usersService.findAll();
   }
 
